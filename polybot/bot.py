@@ -63,7 +63,7 @@ class Bot:
 
     def handle_message(self, msg):
         """Bot Main message handler"""
-        logger.info(f'Incoming message: {msg}')
+        logger.info(f'Incoming message is: {msg}')
         self.send_text(msg['chat']['id'], f'Your original message: {msg["text"]}')
 
 

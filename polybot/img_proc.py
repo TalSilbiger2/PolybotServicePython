@@ -1,6 +1,7 @@
 from pathlib import Path
 from matplotlib.image import imread, imsave
 import random
+from loguru import logger
 
 
 def rgb2gray(rgb):
@@ -138,4 +139,5 @@ class Img:
 
             segmented_image.append(segmented_row)
 
+        logger.info("The Image is:")
         self.data = segmented_image
