@@ -75,14 +75,23 @@ class Img:
         # Flatten the image data for easier manipulation
         flat_image = [pixel for row in self.data for pixel in row]
 
-        # Add salt noise
-        salt_indices = random.sample(range(total_pixels), num_salt)
+        # Generate unique indices for salt and pepper
+        all_indices = list(range(total_pixels))
+        salt_indices = set(random.sample(all_indices, num_salt))
+        pepper_indices = set(random.sample(all_indices, num_pepper))
+
+        # Ensure salt and pepper indices do not overlap
+        while salt_indices & pepper_indices:
+            overlap = salt_indices & pepper_indices
+            pepper_indices -= overlap
+            remaining_indices = list(set(all_indices) - salt_indices - pepper_indices)
+            pepper_indices.update(random.sample(remaining_indices, len(overlap)))
+
+        # Apply salt noise
         for idx in salt_indices:
             flat_image[idx] = (255, 255, 255)  # White pixel (salt)
 
-        # Add pepper noise
-        remaining_indices = list(set(range(total_pixels)) - set(salt_indices))
-        pepper_indices = random.sample(remaining_indices, num_pepper)
+        # Apply pepper noise
         for idx in pepper_indices:
             flat_image[idx] = (0, 0, 0)  # Black pixel (pepper)
 
