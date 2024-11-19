@@ -67,27 +67,27 @@ class Img:
         # Store the rotated image in self.data
         self.data = rotated_image
 
+    def salt_n_pepper(self, salt_prob=0.2, pepper_prob=0.2):
+        total_pixels = len(self.data) * len(self.data[0])
+        num_salt = int(salt_prob * total_pixels)
+        num_pepper = int(pepper_prob * total_pixels)
 
-    def salt_n_pepper(self):
-        noisy_image = []
+        # Flatten the image data for easier manipulation
+        flat_image = [pixel for row in self.data for pixel in row]
 
-        for row in self.data:
-            noisy_row = []
-            for pixel in row:
-                # Generate a random number between 0 and 1
-                rand = random.random()
-                # Apply salt or pepper noise based on the random number
-                if rand < 0.2:
-                    noisy_row.append((255, 255, 255))  # Salt (white pixel)
-                elif rand > 0.8:
-                    noisy_row.append((0, 0, 0))  # Pepper (black pixel)
-                else:
-                    noisy_row.append(pixel)  # Keep original pixel
-            noisy_image.append(noisy_row)
+        # Add salt noise
+        salt_indices = random.sample(range(total_pixels), num_salt)
+        for idx in salt_indices:
+            flat_image[idx] = (255, 255, 255)  # White pixel (salt)
 
-        # Store the noisy image in self.data
-        self.data = noisy_image
+        # Add pepper noise
+        remaining_indices = list(set(range(total_pixels)) - set(salt_indices))
+        pepper_indices = random.sample(remaining_indices, num_pepper)
+        for idx in pepper_indices:
+            flat_image[idx] = (0, 0, 0)  # Black pixel (pepper)
 
+        # Reshape flat image back into the original structure
+        self.data = [flat_image[i:i + len(self.data[0])] for i in range(0, total_pixels, len(self.data[0]))]
 
     def concat(self, other_img, direction='horizontal'):
 
