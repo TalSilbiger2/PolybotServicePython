@@ -1,5 +1,6 @@
 from pathlib import Path
 from matplotlib.image import imread, imsave
+import random
 
 
 def rgb2gray(rgb):
@@ -25,6 +26,7 @@ class Img:
         imsave(new_path, self.data, cmap='gray')
         return new_path
 
+
     def blur(self, blur_level=16):
 
         height = len(self.data)
@@ -42,6 +44,7 @@ class Img:
 
         self.data = result
 
+
     def contour(self):
         for i, row in enumerate(self.data):
             res = []
@@ -50,18 +53,89 @@ class Img:
 
             self.data[i] = res
 
+
     def rotate(self):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+        # Check if the image is non-empty
+        if not self.data or not all(self.data):
+            raise RuntimeError("Invalid image format. Image cannot be empty.")
+
+        # Transpose and reverse rows to rotate 90 degrees clockwise
+        rotated_image = [[self.data[row][col] for row in range(len(self.data) - 1, -1, -1)]
+                         for col in range(len(self.data[0]))]
+
+        # Store the rotated image in self.data
+        self.data = rotated_image
+
 
     def salt_n_pepper(self):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+        noisy_image = []
+
+        for row in self.data:
+            noisy_row = []
+            for pixel in row:
+                # Generate a random number between 0 and 1
+                rand = random.random()
+                # Apply salt or pepper noise based on the random number
+                if rand < 0.2:
+                    noisy_row.append((255, 255, 255))  # Salt (white pixel)
+                elif rand > 0.8:
+                    noisy_row.append((0, 0, 0))  # Pepper (black pixel)
+                else:
+                    noisy_row.append(pixel)  # Keep original pixel
+            noisy_image.append(noisy_row)
+
+        # Store the noisy image in self.data
+        self.data = noisy_image
+
 
     def concat(self, other_img, direction='horizontal'):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+
+        concatenated_image = []
+
+        # Ensure both images have the same height
+        if direction == 'horizontal':
+            if len(self.data) != len(other_img.data):
+                raise RuntimeError("Images must have the same height for horizontal concatenation.")
+            else:
+                # Iterate over each row and concatenate horizontally
+                for row1, row2 in zip(self.data, other_img.data):
+                    # Combine the rows side-by-side
+                    concatenated_row = row1 + row2
+                    # Initialize an empty list to store the concatenated image data
+                    concatenated_image.append(concatenated_row)  # 1 list together
+
+
+        elif direction == 'vertical':
+            if any(len(row) != len(other_img[0]) for row in self.data) or any(
+                    len(row) != len(self.data[0]) for row in other_img):
+                raise RuntimeError("Images must have the same width for vertical concatenation.")
+            else:
+                concatenated_image = self.data + other_img
+            # Iterate over each row and concatenate horizontally
+            for row in other_img.data:
+                # Combine the rows at image end
+                self.data.append(row)
+        else:
+            raise ValueError("Invalid direction. Use 'horizontal' or 'vertical'.")
+
+        # Store the result in self.data
+        self.data = concatenated_image
+
 
     def segment(self):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+        # Intensity Calculation: For each pixel, we calculate the intensity by averaging its RGB values.
+        # Create a new list to store the segmented image
+        segmented_image = []
+
+        for row in self.data:
+            segmented_row = []
+            for pixel in row:
+                intensity = sum(pixel)/3
+                if intensity > 100:
+                    segmented_row.append((255,255,255)) # white pixel
+                else:
+                    segmented_row.append((0, 0, 0)) # black pixel
+
+            segmented_image.append(segmented_row)
+
+        self.data = segmented_image
