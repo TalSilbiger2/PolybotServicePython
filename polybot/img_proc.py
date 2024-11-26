@@ -122,12 +122,16 @@ class Img:
         for row in self.data:
             segmented_row = []
             for pixel in row:
-                # Ensure pixel is a tuple or list with 3 components
-                if isinstance(pixel, (list, tuple)) and len(pixel) == 3:
+                # Check if the pixel is grayscale (single value)
+                if isinstance(pixel, (int, float)):
+                    intensity = pixel
+                # Check if the pixel is RGB (list or tuple of length 3)
+                elif isinstance(pixel, (list, tuple)) and len(pixel) == 3:
                     intensity = sum(pixel) / 3
                 else:
-                    raise ValueError(f"Invalid pixel format: {pixel}. Expected a tuple or list of length 3.")
+                    raise ValueError(f"Invalid pixel format: {pixel}. Expected a number or a tuple/list of length 3.")
 
+                # Apply the threshold to determine black or white
                 if intensity > 100:
                     segmented_row.append((255, 255, 255))  # White pixel
                 else:
