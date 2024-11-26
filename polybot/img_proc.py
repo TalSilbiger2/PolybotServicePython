@@ -133,9 +133,9 @@ class Img:
 
                 # Apply the threshold to determine black or white
                 if intensity > 100:
-                    segmented_row.append((255, 255, 255))  # White pixel
+                    segmented_row.append(255)  # White pixel
                 else:
-                    segmented_row.append((0, 0, 0))  # Black pixel
+                    segmented_row.append(0)  # Black pixel
 
             segmented_image.append(segmented_row)
 
