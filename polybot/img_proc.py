@@ -67,36 +67,18 @@ class Img:
         # Store the rotated image in self.data
         self.data = rotated_image
 
-    def salt_n_pepper(self, salt_prob=0.2, pepper_prob=0.2):
-        total_pixels = len(self.data) * len(self.data[0])
-        num_salt = int(salt_prob * total_pixels)
-        num_pepper = int(pepper_prob * total_pixels)
+    def salt_n_pepper(self):
+        for i in range(len(self.data)):
+            for j in range(len(self.data[i])):
+                rand_num = random.random()
 
-        # Flatten the image data for easier manipulation
-        flat_image = [pixel for row in self.data for pixel in row]
+                if rand_num < 0.2:
+                    self.data[i][j] = 255
 
-        # Generate unique indices for salt and pepper
-        all_indices = list(range(total_pixels))
-        salt_indices = set(random.sample(all_indices, num_salt))
-        pepper_indices = set(random.sample(all_indices, num_pepper))
+                elif rand_num > 0.8:
+                    self.data[i][j] = 0
 
-        # Ensure salt and pepper indices do not overlap
-        while salt_indices & pepper_indices:
-            overlap = salt_indices & pepper_indices
-            pepper_indices -= overlap
-            remaining_indices = list(set(all_indices) - salt_indices - pepper_indices)
-            pepper_indices.update(random.sample(remaining_indices, len(overlap)))
-
-        # Apply salt noise
-        for idx in salt_indices:
-            flat_image[idx] = (255, 255, 255)  # White pixel (salt)
-
-        # Apply pepper noise
-        for idx in pepper_indices:
-            flat_image[idx] = (0, 0, 0)  # Black pixel (pepper)
-
-        # Reshape flat image back into the original structure
-        self.data = [flat_image[i:i + len(self.data[0])] for i in range(0, total_pixels, len(self.data[0]))]
+        self.save_img()
 
     def concat(self, other_img, direction='horizontal'):
 

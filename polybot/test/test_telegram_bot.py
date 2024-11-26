@@ -1,7 +1,10 @@
 import unittest
 from unittest.mock import patch, Mock, mock_open, MagicMock
+from venv import logger
+
 from polybot.bot import ImageProcessingBot
 import os
+
 
 img_path = 'polybot/test/beatles.jpeg' if '/polybot/test' not in os.getcwd() else 'beatles.jpeg'
 
@@ -42,7 +45,7 @@ mock_msg = {
          'height': 660
          }
     ],
-    'caption': 'Rotate'
+    'caption': 'Rotate',
 }
 
 
