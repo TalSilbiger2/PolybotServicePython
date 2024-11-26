@@ -122,13 +122,21 @@ class Img:
         for row in self.data:
             segmented_row = []
             for pixel in row:
-                intensity = sum(pixel)/3
-                if intensity > 100:
-                    segmented_row.append((255,255,255)) # white pixel
+                # Ensure pixel is a tuple or list with 3 components
+                if isinstance(pixel, (list, tuple)) and len(pixel) == 3:
+                    intensity = sum(pixel) / 3
                 else:
-                    segmented_row.append((0, 0, 0)) # black pixel
+                    raise ValueError(f"Invalid pixel format: {pixel}. Expected a tuple or list of length 3.")
+
+                if intensity > 100:
+                    segmented_row.append((255, 255, 255))  # White pixel
+                else:
+                    segmented_row.append((0, 0, 0))  # Black pixel
 
             segmented_image.append(segmented_row)
 
-        logger.info("The Image is:")
+        # Log the segmentation process
+        logger.info("Image segmentation complete.")
+
+        # Update the image data
         self.data = segmented_image
